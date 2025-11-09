@@ -1,0 +1,26 @@
+# Core numerics / data
+numpy
+pandas
+scipy
+
+# Modelling
+scikit-learn
+statsmodels
+xgboost
+
+# IO / parquet
+pyarrow
+fastparquet
+fsspec
+
+# Plotting / viz
+matplotlib
+seaborn
+plotly
+
+# Notebooks / Jupyter
+ipykernel
+nbformat
+
+# Utils
+tqdm
