@@ -29,3 +29,6 @@ dist/
 # Local config / env files
 .env
 .env.*
+
+# Data files
+data/
