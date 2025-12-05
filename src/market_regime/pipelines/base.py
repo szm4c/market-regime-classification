@@ -1,40 +1,9 @@
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Optional, Tuple, Self
-import numpy as np
+from typing import Self
 import pandas as pd
 
-
-class BaseFeatureBuilder(ABC):
-    """Abstract base for feature builders used in regime pipelines."""
-
-    @abstractmethod
-    def build_features(
-        self,
-        df: pd.DataFrame,
-        is_train: bool,
-    ) -> Tuple[np.ndarray, Optional[np.ndarray], pd.Index]:
-        """Return (x, y, index) for given DataFrame."""
-        ...
-
-
-class BaseEstimator(ABC):
-    """Abstract base for estimators used in regime pipelines."""
-
-    @abstractmethod
-    def fit(self, x: np.ndarray, y: np.ndarray):
-        """Fit estimator on features X and labels y."""
-        ...
-
-    @abstractmethod
-    def predict(self, x: np.ndarray) -> np.ndarray:
-        """Predict class labels for features X."""
-        ...
-
-    @abstractmethod
-    def predict_proba(self, x: np.ndarray) -> np.ndarray:
-        """Predict class probabilities for features X."""
-        ...
+from market_regime.features.base import BaseFeatureBuilder
+from market_regime.models.base import BaseModel
 
 
 @dataclass  # init and repr
@@ -42,7 +11,7 @@ class RegimePipeline:
     """Pipeline combining a feature builder and an estimator."""
 
     feature_builder: BaseFeatureBuilder
-    estimator: BaseEstimator
+    estimator: BaseModel
 
     def fit(self, df_train: pd.DataFrame) -> Self:
         """Fit pipeline on training DataFrame."""
