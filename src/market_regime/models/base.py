@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 
-class BaseEstimator(ABC):
+class BaseModel(ABC):
     """Abstract base for estimators used in regime pipelines."""
 
     @abstractmethod
