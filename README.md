@@ -2,7 +2,6 @@
 
 Comparison of classical and nonlinear methods for market regime classification on TTF front-month futures, using:
 
-- Hidden Markov Models (HMM)
 - Markov-switching models
 - XGBoost 3-class classifier
 - Symbolic representations with fuzzy discretization
@@ -78,10 +77,9 @@ pip install -e .
 
 ## Planned model pipelines
 
-Each of the five methods will share the same target labels and differ only in feature construction and modeling approach:
-- HMM-based regime models
+Each of the four methods will share the same target labels and differ only in feature construction and modeling approach:
 - Markov-switching models
-- XGBoost 3-class classifier on time-series features
+- XGBoost 3-class classifier on time-series features / LGBM
 - Symbolic + fuzzy discretization with a classifier on symbolic features
 - Image-based representations (Recurrence Plots / GAF) + clustering or classifiers
   
