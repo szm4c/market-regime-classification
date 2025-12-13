@@ -16,7 +16,7 @@ def calculate_best_k(a: np.ndarray) -> float:
     as possible to 1/3 each. If no better k is found, 0.0 is returned.
 
     Args:
-        a: One-dimensional array of real-valued scores.
+        a: One-dimensional array of real-valued scores centered in zero.
 
     Returns:
         The selected symmetric threshold k.
