@@ -7,8 +7,8 @@ def calculate_best_k(a: np.ndarray) -> float:
     """
     Compute a symmetric threshold k that balances three classes.
 
-    The array `a` is treated as a score (e.g. future Sharpe-like ratio).
-    For each candidate k, points are split into:
+    The array `a` is treated as a score centered in zero. For each
+    candidate k, points are split into:
         - bearish: a <= -k
         - neutral: -k < a < k
         - bullish: a >= k
