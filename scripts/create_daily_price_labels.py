@@ -1,6 +1,6 @@
 from pathlib import Path
 import pandas as pd
-from market_regime.labeling import make_regime_labels
+from market_regime.labels import make_regime_labels
 
 
 def main() -> None:
