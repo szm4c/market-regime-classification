@@ -75,8 +75,8 @@ def make_regime_labels(
     df = daily_prices.copy().reset_index(drop=False)
 
     # Check required columns
-    obligatory_cols: list[str] = ["trading_date", "delivery_date", "open", "close"]
-    missing_cols = [col for col in obligatory_cols if col not in df.columns]
+    required_cols: list[str] = ["trading_date", "delivery_date", "open", "close"]
+    missing_cols = [col for col in required_cols if col not in df.columns]
     if missing_cols:
         raise ValueError(f"`daily_prices` is missing required columns: {missing_cols}.")
 
@@ -86,7 +86,7 @@ def make_regime_labels(
 
     # Rename price columns, set index, sort by trading date
     df = (
-        df[obligatory_cols]
+        df[required_cols]
         .rename(columns={"open": "open_t", "close": "close_t"})
         .set_index("trading_date")
         .sort_index()
