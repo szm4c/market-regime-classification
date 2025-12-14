@@ -57,12 +57,6 @@ def calculate_log_returns(
     return df["log_return_t"]
 
 
-from __future__ import annotations
-
-from typing import Sequence
-import pandas as pd
-
-
 def validate_df(df, required_cols: Sequence[str] | None = None) -> pd.DataFrame:
     """Validate and normalize a pandas DataFrame.
 
