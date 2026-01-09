@@ -1,13 +1,14 @@
 import numpy as np
 import pandas as pd
+from market_regime.features import calculate_log_returns
 
 
 def calculate_best_k(a: np.ndarray) -> float:
     """
     Compute a symmetric threshold k that balances three classes.
 
-    The array `a` is treated as a score (e.g. future Sharpe-like ratio).
-    For each candidate k, points are split into:
+    The array `a` is treated as a score centered in zero. For each
+    candidate k, points are split into:
         - bearish: a <= -k
         - neutral: -k < a < k
         - bullish: a >= k
@@ -15,7 +16,7 @@ def calculate_best_k(a: np.ndarray) -> float:
     as possible to 1/3 each. If no better k is found, 0.0 is returned.
 
     Args:
-        a: One-dimensional array of real-valued scores.
+        a: One-dimensional array of real-valued scores centered in zero.
 
     Returns:
         The selected symmetric threshold k.
@@ -74,8 +75,8 @@ def make_regime_labels(
     df = daily_prices.copy().reset_index(drop=False)
 
     # Check required columns
-    obligatory_cols: list[str] = ["trading_date", "delivery_date", "open", "close"]
-    missing_cols = [col for col in obligatory_cols if col not in df.columns]
+    required_cols: list[str] = ["trading_date", "delivery_date", "open", "close"]
+    missing_cols = [col for col in required_cols if col not in df.columns]
     if missing_cols:
         raise ValueError(f"`daily_prices` is missing required columns: {missing_cols}.")
 
@@ -85,7 +86,7 @@ def make_regime_labels(
 
     # Rename price columns, set index, sort by trading date
     df = (
-        df[obligatory_cols]
+        df[required_cols]
         .rename(columns={"open": "open_t", "close": "close_t"})
         .set_index("trading_date")
         .sort_index()
@@ -109,11 +110,9 @@ def make_regime_labels(
         )
 
     # Calculate log returns
-    df["close_t-1"] = (
-        df.groupby("delivery_date")["close_t"].shift(1).fillna(df["open_t"])
+    df["log_return_t"] = calculate_log_returns(
+        df=df, close_col="close_t", open_col="open_t"
     )
-    df["log_return_t"] = np.log(df["close_t"] / df["close_t-1"])
-
     df[f"log_return_t-{window_len-1}:t"] = (
         df["log_return_t"]
         .rolling(window=window_len, min_periods=window_len, center=False)
@@ -122,6 +121,8 @@ def make_regime_labels(
     df[f"log_return_t+1:t+{window_len}"] = df[f"log_return_t-{window_len-1}:t"].shift(
         -window_len
     )
+
+    # Calculate volatility
     df[f"volatility_t-{window_len-1}:t"] = df["log_return_t"].rolling(
         window=window_len, min_periods=window_len, center=False
     ).std() * np.sqrt(window_len)
@@ -129,6 +130,7 @@ def make_regime_labels(
         -window_len
     )
 
+    # Calculate sharpe ratio (mean / std)
     df[f"sharpe_ratio_{window_len}"] = (
         df[f"log_return_t+1:t+{window_len}"] / df[f"volatility_t+1:t+{window_len}"]
     )
