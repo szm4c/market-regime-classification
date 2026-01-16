@@ -1,4 +1,3 @@
-from typing import Optional, Tuple
 from dataclasses import dataclass
 import numpy as np
 import pandas as pd
@@ -27,7 +26,7 @@ class ImageFeatureBuilder(BaseFeatureBuilder):
         self,
         df: pd.DataFrame,
         is_train: bool,
-    ) -> Tuple[np.ndarray, Optional[np.ndarray], pd.Index]:
+    ) -> tuple[np.ndarray, np.ndarray | None, pd.Index]:
         """Return (x, y, index) for given DataFrame."""
         if isinstance(df, pd.DataFrame):
             if "close" not in df.columns:

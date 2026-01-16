@@ -1,4 +1,3 @@
-from typing import Optional, Tuple
 import numpy as np
 import pandas as pd
 from market_regime.features.base import BaseFeatureBuilder
@@ -12,7 +11,7 @@ class SharpeFeatureBuilder(BaseFeatureBuilder):
         self,
         df: pd.DataFrame,
         is_train: bool,
-    ) -> Tuple[np.ndarray, Optional[np.ndarray], pd.Index]:
+    ) -> tuple[np.ndarray, np.ndarray | None, pd.Index]:
         """Return (x, y, index) for given DataFrame."""
         required_cols = ["delivery_date", "open_t", "close_t"]
         if is_train:
