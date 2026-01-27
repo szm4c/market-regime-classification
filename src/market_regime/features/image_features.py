@@ -76,7 +76,7 @@ class ImageFeatureBuilder(BaseFeatureBuilder):
             else None
         )
 
-        return x, y, idx
+        return x, y, idx, None
 
 
 def transform_price(

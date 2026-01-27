@@ -11,6 +11,6 @@ class BaseFeatureBuilder(ABC):
         self,
         df: pd.DataFrame,
         is_train: bool,
-    ) -> tuple[np.ndarray, np.ndarray | None, pd.Index]:
-        """Return (x, y, index) for given DataFrame."""
+    ) -> tuple[np.ndarray, np.ndarray | None, pd.Index, pd.Index]:
+        """Return (x, y, index, features) for given DataFrame."""
         ...

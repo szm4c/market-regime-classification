@@ -24,5 +24,6 @@ class SharpeFeatureBuilder(BaseFeatureBuilder):
         )
         y = df["target"].to_numpy() if is_train else None
         idx = df.index
+        features = ["log_returns"]
 
-        return x, y, idx
+        return x, y, idx, features

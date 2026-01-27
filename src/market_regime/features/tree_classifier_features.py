@@ -114,8 +114,10 @@ class TreeClassifierFeatureBuilder(BaseFeatureBuilder):
             #     )
 
             df = df.dropna()
-            x = df.drop(columns=["delivery_date", "target"], errors="ignore").to_numpy()
+            x = df.drop(columns=["delivery_date", "target"], errors="ignore")
+            features = x.columns
+            x = x.to_numpy()
             y = df["target"].to_numpy() if is_train else None
             idx = df.index
 
-        return x, y, idx
+        return x, y, idx, features
