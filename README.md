@@ -1,11 +1,10 @@
 # market-regime-classification
 
-Comparison of classical and nonlinear methods for market regime classification on TTF front-month futures, using:
-
-- Markov-switching models
+Market regime classification for energy futures (TTF front-month), combining classical time-series models and modern machine-learning approaches under a common labeling and evaluation framework. Tested models are:
+- Markov-switching model
 - XGBoost 3-class classifier
-- Symbolic representations with fuzzy discretization
-- Image-based features (Recurrence Plots, Gramian Angular Fields) with clustering
+- ARCH model
+- Image-based features (Recurrence Plots, Gramian Angular Fields) with CNN
 
 All methods share the same input (daily close prices of the front-month futures strip) and the same target - for each trading day, predict the regime of the next 20 business days:
 - `-1` – bearish trend  
@@ -14,7 +13,7 @@ All methods share the same input (daily close prices of the front-month futures 
 
 ## Target / label construction
 
-Labels are built once from raw daily prices and then reused by all models. The labeling logic lives in `market_regime.labeling.make_regime_labels`.
+Labels are built once from raw daily prices and then reused by all models. The labeling logic lives in `market_regime.labels`.
 
 ## Data flow
 
@@ -35,7 +34,94 @@ Labels are built once from raw daily prices and then reused by all models. The l
     
   All model experiments read from the preprocessed file and use the same target.
 
-## Repository structure (simplified)
+## Feature construction
+
+Feature engineering is modular and lives in `src/market_regime/features/`.
+
+Key components:
+
+- base.py
+  Abstract base class for all feature builders.
+
+- tree_classifier_features.py
+  Time-series features for tree-based models (lags, rolling statistics, returns, volatility proxies, calendar effects).
+
+- image_features.py
+  Image-based representations (e.g. Recurrence Plots, Gramian Angular Fields) intended for CNN-based models.
+
+- sharpe_features.py
+  Only log-return calculation.
+
+- utils.py
+  Shared helpers (validation, log-return calculation, etc.).
+
+Each feature builder converts a DataFrame into (X, y, index, features) and is fully compatible with walk-forward evaluation.
+
+## Models
+
+Models are implemented in `src/market_regime/models/`.
+
+List of all models:
+
+- xgb.py
+  XGBoost multiclass classifier for regimes {-1, 0, 1}.
+
+- markov_occupancy.py
+  Markov-style regime model.
+
+- sharpe_arch.py
+  ARCH / GARCH-based forecasting model.
+
+- torch_cnn.py
+  CNN-based classifier consuming image representations.
+
+- base.py
+  Common model interface (fit, predict, predict_proba).
+
+## Pipelines
+
+Pipelines combine feature builders and models into a single object.
+
+Pipeline code lives in `src/market_regime/pipelines/`.
+
+Key file:
+- base.py
+  Defines the RegimePipeline, which:
+  - builds features
+  - fits the estimator
+  - produces predictions or probabilities
+
+Example usage:
+```
+rp = RegimePipeline(
+    feature_builder=TreeClassifierFeatureBuilder(),
+    estimator=XGBTreeModel(**best_params),
+)
+```
+
+This design cleanly separates:
+- data and feature logic
+- model logic
+- evaluation logic
+
+## Evaluation
+
+All models are evaluated using a walk-forward / expanding window procedure:
+
+- At each date $t$:
+  - train on all data available up to $t-1$
+  - predict the regime for date $t$
+- Predictions are aggregated into a full out-of-sample series.
+
+Evaluation metrics include:
+- macro F1-score
+- balanced accuracy
+- confusion matrices
+- class distribution diagnostics
+
+This ensures no look-ahead bias and realistic performance estimates.
+
+## Repository structure
 
 ```
 market-regime-classification/
@@ -45,16 +131,23 @@ market-regime-classification/
 │  └─ preprocessed/
 │     └─ daily_prices_with_labels.csv       # created by script
 │
-├─ src/
-│  └─ market_regime/
-│     ├─ __init__.py
-│     └─ labeling.py                        # make_regime_labels, calculate_best_k
-│
 ├─ notebooks/
-│  └─ 01_regime_label_construction.ipynb    # label exploration
+│  ├─ 00_data_exploration.ipynb
+│  ├─ 01_regime_label_construction.ipynb
+│  ├─ 02_recurrence_plot_and_gramian_angular_fields.ipynb
+│  ├─ 03_arma_garch_exploration.ipynb
+│  └─ 05_tree_classifier_exploration.ipynb
 │
 ├─ scripts/
 │  └─ create_daily_price_labels.py
+|
+├─ src/
+│  └─ market_regime/
+│     ├─ features/
+│     ├─ labels/
+│     ├─ models/
+│     ├─ pipelines/
+│     └─ data.py
 │
 ├─ requirements.txt
 ├─ pyproject.toml
@@ -62,25 +155,24 @@ market-regime-classification/
 ```
 
 ## Installation
-
-Create and activate a virtual environment, then install dependencies and the package:
-```
-python -m venv .venv
-# Windows
-.venv\Scripts\Activate.ps1
-# Linux/macOS
-source .venv/bin/activate
-
-pip install -r requirements.txt
-pip install -e .
-```
-
-## Planned model pipelines
-
-Each of the four methods will share the same target labels and differ only in feature construction and modeling approach:
-- Markov-switching models
-- XGBoost 3-class classifier on time-series features / LGBM
-- Symbolic + fuzzy discretization with a classifier on symbolic features
-- Image-based representations (Recurrence Plots / GAF) + clustering or classifiers
-  
-All pipelines will be evaluated in an expanding window / walk-forward fashion, training on data up to time *t* and predicting the regime for the next 20 business days.
+1. Clone the repo locally.
+2. Create a virtual environment:
+    ```
+    python -m venv .venv
+    ```
+3. Activate a virtual environment:
+    - Windows
+      ```
+      .venv\Scripts\Activate.ps1
+      ```
+    - Linux/macOS
+      ```
+      source .venv/bin/activate
+      ```
+4. Install dependencies and the package inside the venv:
+    ```
+    pip install -r requirements.txt
+    ```
+    ```
+    pip install -e .
+    ```

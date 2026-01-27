@@ -91,7 +91,7 @@ def validate_df(df, required_cols: Sequence[str] | None = None) -> pd.DataFrame:
     if not isinstance(df, pd.DataFrame):
         raise TypeError(f"`df` must be a pandas.DataFrame, got {type(df).__name__}.")
 
-    out = df
+    out = df.copy()
 
     # Normalize index to DatetimeIndex named "trading_date"
     if not (

@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Tuple
 import numpy as np
 import pandas as pd
 
@@ -12,6 +11,6 @@ class BaseFeatureBuilder(ABC):
         self,
         df: pd.DataFrame,
         is_train: bool,
-    ) -> Tuple[np.ndarray, Optional[np.ndarray], pd.Index]:
-        """Return (x, y, index) for given DataFrame."""
+    ) -> tuple[np.ndarray, np.ndarray | None, pd.Index, pd.Index]:
+        """Return (x, y, index, features) for given DataFrame."""
         ...
