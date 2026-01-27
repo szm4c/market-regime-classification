@@ -15,7 +15,7 @@ class RegimePipeline:
 
     def fit(self, df_train: pd.DataFrame) -> Self:
         """Fit pipeline on training DataFrame."""
-        x_train, y_train, _ = self.feature_builder.build_features(
+        x_train, y_train, _, _ = self.feature_builder.build_features(
             df_train,
             is_train=True,
         )
@@ -30,7 +30,7 @@ class RegimePipeline:
     def predict(self, df: pd.DataFrame) -> pd.Series:
         """Predict labels for DataFrame df."""
 
-        x, _, idx = self.feature_builder.build_features(df, is_train=False)
+        x, _, idx, _ = self.feature_builder.build_features(df, is_train=False)
 
         y_pred = self.estimator.predict(x)
 
@@ -39,7 +39,7 @@ class RegimePipeline:
     def predict_proba(self, df: pd.DataFrame) -> pd.DataFrame:
         """Predict class probabilities for DataFrame df."""
 
-        x, _, idx = self.feature_builder.build_features(df, is_train=False)
+        x, _, idx, _ = self.feature_builder.build_features(df, is_train=False)
         proba = self.estimator.predict_proba(x)
 
         n_classes = proba.shape[1]
