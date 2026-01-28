@@ -1,0 +1,10 @@
+{
+  "mean": "AR",
+  "lags": 0,
+  "vol": "GARCH",
+  "p": 1,
+  "o": 0,
+  "q": 1,
+  "dist": "normal",
+  "k": null
+}
