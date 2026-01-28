@@ -87,9 +87,8 @@ def get_data(preprocessed: bool = True):
 
 
 def save_params(params: dict, name: str) -> None:
-    file_name = name.rstrip(".json")
     data_path = get_data_path(data_relpath="data/params")
-    file_path = data_path / file_name
+    file_path = data_path / name
 
     def _default(o):
         # np.float64, np.int64 itp.
@@ -110,9 +109,8 @@ def save_params(params: dict, name: str) -> None:
 
 
 def load_params(name: str) -> dict:
-    file_name = name if name.endswith(".json") else f"{name}.json"
     data_path = get_data_path(data_relpath="data/params")
-    file_path = data_path / file_name
+    file_path = data_path / name
 
     if not file_path.exists():
         raise FileNotFoundError(f"Params file not found: {file_path}")
