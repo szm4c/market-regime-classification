@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 import pandas as pd
 
 
@@ -83,3 +84,43 @@ def get_data(preprocessed: bool = True):
     )
 
     return df
+
+
+def save_params(params: dict, name: str) -> None:
+    file_name = name.rstrip(".json")
+    data_path = get_data_path(data_relpath="data/params")
+    file_path = data_path / file_name
+
+    def _default(o):
+        # np.float64, np.int64 itp.
+        try:
+            import numpy as np
+
+            if isinstance(o, (np.integer,)):
+                return int(o)
+            if isinstance(o, (np.floating,)):
+                return float(o)
+        except Exception:
+            pass
+        # fallback
+        return str(o)
+
+    with file_path.open("w", encoding="utf-8") as f:
+        json.dump(params, f, indent=2, ensure_ascii=False, default=_default)
+
+
+def load_params(name: str) -> dict:
+    file_name = name if name.endswith(".json") else f"{name}.json"
+    data_path = get_data_path(data_relpath="data/params")
+    file_path = data_path / file_name
+
+    if not file_path.exists():
+        raise FileNotFoundError(f"Params file not found: {file_path}")
+
+    with file_path.open("r", encoding="utf-8") as f:
+        params = json.load(f)
+
+    if not isinstance(params, dict):
+        raise ValueError(f"Expected dict in {file_path}, got {type(params)}")
+
+    return params
