@@ -29,8 +29,8 @@ class ImageFeatureBuilder(BaseFeatureBuilder):
     ) -> tuple[np.ndarray, np.ndarray | None, pd.Index]:
         """Return (x, y, index) for given DataFrame."""
         if isinstance(df, pd.DataFrame):
-            if "close" not in df.columns:
-                raise KeyError("df must contain a 'close' column")
+            if "close_t" not in df.columns:
+                raise KeyError("df must contain a 'close_t' column")
             if is_train and self.config.target_col not in df.columns:
                 raise KeyError(
                     f"df must contain target column '{self.config.target_col}' when "
@@ -42,7 +42,7 @@ class ImageFeatureBuilder(BaseFeatureBuilder):
         df = df.sort_index()
 
         # Extract price array from DataFrame
-        price = df["close"].to_numpy()
+        price = df["close_t"].to_numpy()
 
         # Transform price into (N, W) arrays
         x_rp = transform_price(

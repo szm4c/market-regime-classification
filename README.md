@@ -1,7 +1,6 @@
 # market-regime-classification
 
 Market regime classification for energy futures (TTF front-month), combining classical time-series models and modern machine-learning approaches under a common labeling and evaluation framework. Tested models are:
-- Markov-switching model
 - XGBoost 3-class classifier
 - ARCH model
 - Image-based features (Recurrence Plots, Gramian Angular Fields) with CNN
@@ -66,9 +65,6 @@ List of all models:
 - xgb.py
   XGBoost multiclass classifier for regimes {-1, 0, 1}.
 
-- markov_occupancy.py
-  Markov-style regime model.
-
 - sharpe_arch.py
   ARCH / GARCH-based forecasting model.
 
@@ -126,6 +122,7 @@ This ensures no look-ahead bias and realistic performance estimates.
 ```
 market-regime-classification/
 ├─ data/
+│  ├─ params/
 │  ├─ raw/
 │  │  └─ daily_prices.csv
 │  └─ preprocessed/
@@ -136,7 +133,8 @@ market-regime-classification/
 │  ├─ 01_regime_label_construction.ipynb
 │  ├─ 02_recurrence_plot_and_gramian_angular_fields.ipynb
 │  ├─ 03_arma_garch_exploration.ipynb
-│  └─ 05_tree_classifier_exploration.ipynb
+│  ├─ 05_tree_classifier_exploration.ipynb
+│  └─ 06_experiment.ipynb
 │
 ├─ scripts/
 │  └─ create_daily_price_labels.py
@@ -147,7 +145,8 @@ market-regime-classification/
 │     ├─ labels/
 │     ├─ models/
 │     ├─ pipelines/
-│     └─ data.py
+│     ├─ data.py
+│     └─ experiment.py
 │
 ├─ requirements.txt
 ├─ pyproject.toml
