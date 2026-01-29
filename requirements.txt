@@ -3,12 +3,21 @@ numpy
 pandas
 scipy
 
-# Modelling
+# Modelling / ML
 scikit-learn
 statsmodels
 xgboost
+torch
+torchvision
+arch
 
-# IO / parquet
+# Feature engineering / images
+pyts
+numba
+networkx
+pillow
+
+# IO / storage
 pyarrow
 fastparquet
 fsspec
@@ -18,9 +27,7 @@ matplotlib
 seaborn
 plotly
 
-# Notebooks / Jupyter
-ipykernel
-nbformat
-
-# Utils
+# Utilities
 tqdm
+joblib
+typing_extensions
